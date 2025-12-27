@@ -14,34 +14,39 @@ const setMysqlSlaveStatus = newStatus => {
     console.error(`Status: ${newStatus} is invalid.`);
     return;
   }
-  const connection = mysql.createConnection({
-    database: dbName,
-    host: dbHost,
-    password: dbPass,
-    user: dbUser,
+  const connection1 = mysql.createConnection({
+    database: dbName, host: dbHost, password: dbPass, user: dbUser,
   });
   const slaveStatusSql = 'show slave status';
 
-  const sqlQuery = newStatus.toLowerCase() === 'on'
-    ? 'start slave'
-    : 'stop slave';
-  connection.connect(err => {
+  const changeSlaveSql = newStatus.toLowerCase() === 'on' ? 'start slave' : 'stop slave';
+  connection1.connect(err => {
     if (err) {
       console.error('Error connecting to MySQL database:', err);
       return;
     }
-    connection.query(slaveStatusSql, (error, results) => {
+    connection1.query(slaveStatusSql, (error, results) => {
       if (error) throw error;
       const currentStatus = results[0].Slave_IO_Running;
-      if ((currentStatus === 'No' && newStatus === 'On')
-        || (currentStatus === 'Yes' && newStatus === 'Off')) {
-        console.log(`Changing the mysql slave status: Current state=${currentStatus}, and new state=${newStatus}`)
-        connection.query(sqlQuery, (error, results) => {
-          if (error) throw error;
+      if ((currentStatus === 'No' && newStatus === 'on') || (currentStatus === 'Yes' && newStatus === 'off')) {
+        console.log(`Slave state update: Slave_IO_Running='${currentStatus}' newStatus:'${newStatus}'`)
+        const connection2 = mysql.createConnection({
+          database: dbName, host: dbHost, password: dbPass, user: dbUser,
         });
+        connection2.connect(err => {
+          if (err) {
+            console.error('Error connecting to MySQL database:', err);
+            return;
+          }
+          connection2.query(changeSlaveSql, (error, results) => {
+            if (error) throw error;
+            console.log(changeSlaveSql,results)
+          });
+          connection2.end();
+        })
       }
     })
-    connection.end(); // Close the connection when done
+    connection1.end(); // Close the connection when done
   });
 }
 export default setMysqlSlaveStatus;
