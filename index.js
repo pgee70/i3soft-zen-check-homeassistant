@@ -10,7 +10,7 @@ checkApiStatus
           console.log(checkSwitchSocketOutput.message);
           // the socket is found - if the state attribute is 'on' turn slave on.
           // otherwise turn slave off
-          const newState = checkSwitchSocketOutput.message.state ?? '' === 'on'
+          const newState = checkSwitchSocketOutput.message.state === 'on'
             ? 'on'
             : 'off';
           setMysqlSlaveStatus(newState);
