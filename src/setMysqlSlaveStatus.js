@@ -35,6 +35,7 @@ const setMysqlSlaveStatus = newStatus => {
       const currentStatus = results[0].Slave_IO_Running;
       if ((currentStatus === 'No' && newStatus === 'On')
         || (currentStatus === 'Yes' && newStatus === 'Off')) {
+        console.log(`Changing the mysql slave status: Current state=${currentStatus}, and new state=${newStatus}`)
         connection.query(sqlQuery, (error, results) => {
           if (error) throw error;
         });
