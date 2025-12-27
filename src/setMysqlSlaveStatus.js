@@ -20,7 +20,6 @@ const setMysqlSlaveStatus = newStatus => {
     password: dbPass,
     user: dbUser,
   });
-  const checkSql = "SELECT COUNT(1) SlaveThreads FROM information_schema.processlist WHERE user = 'system user';"
   const slaveStatusSql = 'show slave status';
 
   const sqlQuery = newStatus.toLowerCase() === 'on'
@@ -31,23 +30,16 @@ const setMysqlSlaveStatus = newStatus => {
       console.error('Error connecting to MySQL database:', err);
       return;
     }
-    connection.query(checkSql, (error, results) => {
+    connection.query(slaveStatusSql, (error, results) => {
       if (error) throw error;
-      if (parseInt(results[0].SlaveThreads, 10) === 0) {
-        console.log('Mysql slave is not set up, returning');
-        return;
+      const currentStatus = results[0].Slave_IO_Running;
+      if ((currentStatus === 'No' && newStatus === 'On')
+        || (currentStatus === 'Yes' && newStatus === 'Off')) {
+        connection.query(sqlQuery, (error, results) => {
+          if (error) throw error;
+        });
       }
-      connection.query(slaveStatusSql, (error, results) => {
-        if (error) throw error;
-        const currentStatus = results[0].Slave_IO_Running;
-        if ((currentStatus === 'No' && newStatus === 'On')
-          || (currentStatus === 'Yes' && newStatus === 'Off')) {
-          connection.query(sqlQuery, (error, results) => {
-            if (error) throw error;
-          });
-        }
-      })
-    });
+    })
     connection.end(); // Close the connection when done
   });
 }
