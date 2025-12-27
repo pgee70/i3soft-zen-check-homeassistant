@@ -1,0 +1,18 @@
+{
+  "name": "i3soft-zen-check-homeassistant",
+  "version": "1.0.0",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node --env-file=.env index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Peter Gee",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "mysql2": "^3.16.0",
+    "node-fetch": "^3.3.2"
+  }
+}
