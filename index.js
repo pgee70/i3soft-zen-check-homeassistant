@@ -9,7 +9,7 @@ checkApiStatus
       checkSwitchSocket.then(checkSwitchSocketOutput => {
         // console.log(checkSwitchSocketOutput)
         if (checkSwitchSocketOutput.status === true) {
-          console.log(checkSwitchSocketOutput.message);
+          // console.log(checkSwitchSocketOutput.message);
           // the socket is found - if the state attribute is 'on' turn slave on.
           // otherwise turn slave off
           const newState = checkSwitchSocketOutput.message.state === 'on'

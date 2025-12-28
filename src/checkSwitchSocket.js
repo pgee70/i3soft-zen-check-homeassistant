@@ -18,7 +18,7 @@ async function updateEntity() {
   try {
     fetch(updateUrl, {method: 'POST', headers, body: JSON.stringify(body)})
       .then(response => {
-        console.log('updateEntity',response);
+        // console.log('updateEntity',response);
         if (response.ok) {
           return {
             status: true,
