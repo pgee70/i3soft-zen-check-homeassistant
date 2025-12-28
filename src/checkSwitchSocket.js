@@ -47,7 +47,7 @@ async function checkSwitchSocket() {
   try {
     const stateUrl = `${haUrl}/api/states/${haEntityId}`
     const response = await fetch(stateUrl, {method: 'GET', headers});
-    console.log('checkSwitchSocket',response);
+    // console.log('checkSwitchSocket',response);
     if (response.ok) {
 
       const data = await response.json();
