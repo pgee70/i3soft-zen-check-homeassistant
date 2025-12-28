@@ -13,28 +13,26 @@ const headers = {
 }
 
 async function updateEntity() {
-  const updateUrl = `${haUrl}/api/services/homeassistant/update_entity`;
-  const body = {entity_id: haEntityId}
   try {
-    fetch(updateUrl, {method: 'POST', headers, body: JSON.stringify(body)})
-      .then(response => {
-        // console.log('updateEntity',response);
-        if (response.ok) {
-          return {
-            status: true,
-            message: response,
-          }
-        } else {
-          return {
-            status: false,
-            message: `API check failed: ${response.statusText}`
-          };
-        }
-      })
+    const updateEntityUrl = `${haUrl}/api/services/homeassistant/update_entity`;
+    const init = {method: 'POST', headers, body: JSON.stringify({entity_id: haEntityId})}
+    const response = await fetch(updateEntityUrl, init);
+
+    // console.log('updateEntity',response);
+    if (response.ok) {
+      return {
+        status: true,
+        message: `updateEntity response.statusText: ${response.statusText}`,
+      }
+    }
+    return {
+      status: false,
+      message: `updateEntity response.statusText: ${response.statusText}`
+    };
   } catch (error) {
     return {
       status: false,
-      message: 'An error occurred while connecting to the Home Assistant API:' + error.message,
+      message: 'updateEntity:' + error.message,
     }
   }
 }
@@ -46,40 +44,44 @@ async function updateEntity() {
 async function checkSwitchSocket() {
   try {
     const stateUrl = `${haUrl}/api/states/${haEntityId}`
-    const response = await fetch(stateUrl, {method: 'GET', headers});
-    // console.log('checkSwitchSocket',response);
+    const response = await fetch(stateUrl, {method: 'GET', headers: headers});
     if (response.ok) {
-
       const data = await response.json();
       return {
         status: true,
         message: data,
       }
-    } else {
-      return {
-        status: false,
-        message: `API check failed: ${response.statusText}`
-      };
     }
+    return {
+      status: false,
+      message: `updateEntity response.statusText: ${response.statusText}`
+    }
+    // console.log('checkSwitchSocket',response);
+
   } catch (error) {
     return {
       status: false,
-      message: 'An error occurred while connecting to the Home Assistant API:' + error.message,
+      message: 'updateEntity:' + error.message,
     }
   }
 }
 
 const status = new Promise((resolve, reject) => {
-  const updateEntityOutput = updateEntity();
-  if (updateEntityOutput.status === false) {
-    reject(updateEntityOutput);
-  }
-  const checkSwitchOutput = checkSwitchSocket();
-  if (checkSwitchOutput.status === false) {
-    reject(checkSwitchOutput);
-  } else {
-    resolve(checkSwitchOutput);
-  }
+  updateEntity()
+    .then(updateEntityOutput => {
+      console.log('updateEntityOutput',updateEntityOutput);
+      if (updateEntityOutput.status === false) {
+        reject(updateEntityOutput);
+      } else {
+
+        checkSwitchSocket().then(
+          checkSwitchSocketOutput => {
+            console.log('checkSwitchSocketOutput',checkSwitchSocketOutput.message);
+            resolve(checkSwitchSocketOutput);
+          }
+        )
+      }
+    })
 });
+
 export default status;
-status.then(output=>console.log(output))
