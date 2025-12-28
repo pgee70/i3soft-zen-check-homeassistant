@@ -5,7 +5,9 @@ import setMysqlSlaveStatus from "./src/setMysqlSlaveStatus.js";
 checkApiStatus
   .then((checkApiStatusOutput) => {
     if (checkApiStatusOutput.status === true) {
+      // console.log(checkApiStatusOutput);
       checkSwitchSocket.then(checkSwitchSocketOutput => {
+        // console.log(checkSwitchSocketOutput)
         if (checkSwitchSocketOutput.status === true) {
           console.log(checkSwitchSocketOutput.message);
           // the socket is found - if the state attribute is 'on' turn slave on.
