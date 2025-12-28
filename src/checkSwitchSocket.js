@@ -22,12 +22,12 @@ async function updateEntity() {
     if (response.ok) {
       return {
         status: true,
-        message: `updateEntity response.statusText: ${response.statusText}`,
+        message: `updateEntity response.status: ${response.status}`,
       }
     }
     return {
       status: false,
-      message: `updateEntity response.statusText: ${response.statusText}`
+      message: `updateEntity response.status: ${response.status}`
     };
   } catch (error) {
     return {
@@ -54,7 +54,7 @@ async function checkSwitchSocket() {
     }
     return {
       status: false,
-      message: `updateEntity response.statusText: ${response.statusText}`
+      message: `updateEntity response.status: ${response.status}`
     }
     // console.log('checkSwitchSocket',response);
 
@@ -73,7 +73,6 @@ const status = new Promise((resolve, reject) => {
       if (updateEntityOutput.status === false) {
         reject(updateEntityOutput);
       } else {
-
         checkSwitchSocket().then(
           checkSwitchSocketOutput => {
             console.log('checkSwitchSocketOutput',checkSwitchSocketOutput.message);
